@@ -1,13 +1,17 @@
+// idをincrementで設定しているので、seedでは設定しないほうが良い。
+
 /**
  * @param { import("knex").Knex } knex
- * @returns { Promise<void> } 
+ * @returns { Promise<void> }
  */
-exports.seed = async function(knex) {
+exports.seed = async function (knex) {
   // Deletes ALL existing entries
-  await knex('table_name').del()
-  await knex('table_name').insert([
-    {id: 1, colName: 'rowValue1'},
-    {id: 2, colName: 'rowValue2'},
-    {id: 3, colName: 'rowValue3'}
+  await knex("exercises").del();
+  await knex("exercises").insert([
+    { name: "ベンチプレス", target: "胸" },
+    { name: "スクワット", target: "脚" },
+    { name: "デッドリフト", target: "背中" },
+    { name: "オーバーヘッドプレス", target: "肩" },
+    { name: "懸垂", target: "背中" },
   ]);
 };
