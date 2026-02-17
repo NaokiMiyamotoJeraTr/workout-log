@@ -13,9 +13,9 @@ module.exports = {
       password: process.env.DB_PASSWORD,
     },
     migrations: {
-      directory: "knex_migrations",
+      directory: "./db/migrations",
     },
-    seeds: { directory: "" },
+    seeds: { directory: "./db/seeds" },
   },
 
   staging: {
