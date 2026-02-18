@@ -11,7 +11,7 @@ function buildApp() {
   //exercises種目一覧の取得
   app.get("/exercises", async (req, res) => {
     const exercises = await knex("exercises").select("*");
-    res.status(200).json({ data: exercises });
+    res.status(200).json({ exercises: exercises });
   });
 
   // exercise種目登録のAPI
