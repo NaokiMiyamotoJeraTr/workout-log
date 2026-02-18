@@ -1,14 +1,8 @@
-const path = require("path");
-const express = require("express");
-const app = express();
+const { buildApp } = require("./app");
+
 const PORT = process.env.PORT || 3000;
-
-// publicフォルダの中のファイルをそのままwebで見られるようにする設定
-app.use(express.static(path.join(__dirname, "/public")));
-
-//ルートパスにGETリクエストが送られた時の処理
-app.get("/", (req, res));
+const app = buildApp();
 
 app.listen(PORT, () => {
-  console.log("Server is runnning");
+  console.log(`Server listening on: http://localhost:${PORT}/`);
 });
