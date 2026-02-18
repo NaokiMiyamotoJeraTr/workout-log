@@ -2,16 +2,24 @@ export const ShowExercises = (props) => {
   const { exercises } = props;
   return (
     <>
-      <h2>筋トレメニュー一覧</h2>
-      {exercises.map((exercise, index) => {
-        return (
-          <div key={index}>
-            <p>
-              {exercise.name}、{exercise.target}
-            </p>
-          </div>
-        );
-      })}
+      <table border={1}>
+        <thead>
+          <tr>
+            <th>メニュー</th>
+            <th>ターゲット部位</th>
+          </tr>
+        </thead>
+        <tbody>
+          {exercises.map((exercise, index) => {
+            return (
+              <tr key={index}>
+                <td>{exercise.name}</td>
+                <td>{exercise.target}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </>
   );
 };
