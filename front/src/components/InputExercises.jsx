@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export const InputExercises = (props) => {
-  // const {} = props;
+export const InputExercises = () => {
   const [exercise, setExercise] = useState("");
   const [target, setTarget] = useState("");
+  let navigate = useNavigate();
 
   const handleSubmit = async () => {
     if (!exercise) {
@@ -37,6 +38,7 @@ export const InputExercises = (props) => {
 
   return (
     <>
+      <h2>新しい種目登録</h2>
       <form>
         <input
           type="text"
@@ -56,6 +58,7 @@ export const InputExercises = (props) => {
         />
       </form>
       <button onClick={handleSubmit}>追加</button>
+      <button onClick={() => navigate("/")}>Homeに戻る</button>
     </>
   );
 };
