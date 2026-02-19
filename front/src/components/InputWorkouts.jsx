@@ -1,11 +1,16 @@
+import { useEffect } from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const InputWorkouts = (props) => {
   const { exercises } = props;
+  let navigate = useNavigate();
+
   const [sets, setSets] = useState([]);
   const [exerciseId, setexerciseId] = useState("");
   const [weight, setWeight] = useState("");
   const [reps, setReps] = useState("");
+  const [lastWorkouts, setLastWorkouts] = useState([]);
 
   const handleAddSet = () => {
     if (!exerciseId || !weight || !reps) {
@@ -41,8 +46,17 @@ export const InputWorkouts = (props) => {
     });
   };
 
+  useEffect(() => {
+    const getLastWorkouts = async () => {
+      const res = await fetch(`/api/exercises/${exerciseId}`);
+      const lastWorkoutsData = await res.json();
+      setLastWorkouts(lastWorkoutsData);
+    };
+    getLastWorkouts();
+  }, [exerciseId]);
+
   return (
-    <>
+    <div className="card">
       <form>
         <select size="1" onChange={(e) => setexerciseId(e.target.value)}>
           <option value="">メニューを選択</option>
@@ -54,7 +68,6 @@ export const InputWorkouts = (props) => {
             );
           })}
         </select>
-
         <input
           type="number"
           placeholder="重量"
@@ -71,8 +84,22 @@ export const InputWorkouts = (props) => {
           }}
         />
       </form>
+      {lastWorkouts.length > 0 && (
+        <div>
+          <h3>これまでの記録</h3>
+          <ul>
+            {lastWorkouts.map((lastWorkout, index) => (
+              <li key={index}>
+                {lastWorkout.weight}kg / {lastWorkout.reps}回 実施日：
+                {lastWorkout.date}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <button onClick={handleAddSet}>セット登録</button>
+      <button onClick={() => navigate("/")}>Homeに戻る</button>
 
       <br></br>
 
@@ -105,6 +132,6 @@ export const InputWorkouts = (props) => {
           </button>
         </>
       )}
-    </>
+    </div>
   );
 };

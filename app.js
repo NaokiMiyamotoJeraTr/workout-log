@@ -16,6 +16,27 @@ function buildApp() {
     res.status(200).json({ exercises: exercises });
   });
 
+  //指定された種目の前回のメニューを取得するAPI
+  app.get("/api/exercises/:id/", async (req, res) => {
+    const id = Number(req.params.id);
+    const lastWorkout = await knex("sets")
+      .join("workouts", "sets.workout_id", "workouts.id")
+      .where("sets.exercise_id", id)
+      .orderBy("workouts.date", "desc")
+      .select("sets.weight", "sets.reps", "workouts.date");
+
+    if (!lastWorkout) {
+      return res.json([]);
+    }
+    const result = lastWorkout.map((ele) => {
+      return {
+        ...ele,
+        date: ele["date"].toISOString().slice(0, 10), //日付処理の応急処置
+      };
+    });
+    res.json(result);
+  });
+
   // exercise種目登録のAPI
   app.post("/api/exercises", async (req, res) => {
     const payload = req.body;
@@ -69,17 +90,6 @@ function buildApp() {
   // }
   app.post("/api/workouts", async (req, res) => {
     const payload = req.body;
-    // 日付が存在していくかどうかで分けていく。
-
-    // const existingWorkout = await knex("workouts")
-    //   .where({ date: payload.date })
-    //   .first();
-
-    // if (existingWorkout) {
-    //   return res.status(409).json({
-    //     message: "この日付のワークアウトはすでに登録されています",
-    //   });
-    // }
 
     const registeredDate = await knex("workouts")
       .insert({ date: payload.date })
