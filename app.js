@@ -71,15 +71,15 @@ function buildApp() {
     const payload = req.body;
     // 日付が存在していくかどうかで分けていく。
 
-    const existingWorkout = await knex("workouts")
-      .where({ date: payload.date })
-      .first();
+    // const existingWorkout = await knex("workouts")
+    //   .where({ date: payload.date })
+    //   .first();
 
-    if (existingWorkout) {
-      return res.status(409).json({
-        message: "この日付のワークアウトはすでに登録されています",
-      });
-    }
+    // if (existingWorkout) {
+    //   return res.status(409).json({
+    //     message: "この日付のワークアウトはすでに登録されています",
+    //   });
+    // }
 
     const registeredDate = await knex("workouts")
       .insert({ date: payload.date })
