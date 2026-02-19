@@ -8,17 +8,36 @@ function buildApp() {
   // publicフォルダの中のファイルをそのままwebで見られるようにする設定
   app.use(express.static(path.join(__dirname, "/public")));
 
+  app.use(express.json());
+
   //exercises種目一覧の取得
-  app.get("/exercises", async (req, res) => {
+  app.get("/api/exercises", async (req, res) => {
     const exercises = await knex("exercises").select("*");
     res.status(200).json({ exercises: exercises });
   });
 
   // exercise種目登録のAPI
-  // app.post("/exercises", (ree, res));
+  app.post("/api/exercises", async (req, res) => {
+    const payload = req.body;
+    const existingExercise = await knex("exercises")
+      .where({ name: payload.exercise })
+      .first();
+
+    if (existingExercise) {
+      return res.status(409).json({
+        message: "この筋トレメニューはすでに登録されています",
+      });
+    }
+
+    console.log("送られてきた内容2", payload);
+    await knex("exercises").insert({
+      name: payload.exercise,
+      target: payload.target,
+    });
+  });
 
   // worukoutの記録を表示するAPI
-  app.get("/workouts", async (req, res) => {
+  app.get("/api/workouts", async (req, res) => {
     const data = await knex("workouts")
       .join("sets", "workouts.id", "sets.workout_id")
       .join("exercises", "sets.exercise_id", "exercises.id")
@@ -28,7 +47,8 @@ function buildApp() {
         "exercises.name as exercise",
         "sets.weight",
         "sets.reps",
-      );
+      )
+      .orderBy("workouts.date", "desc");
     const result = data.map((ele) => {
       return {
         ...ele,
@@ -40,7 +60,40 @@ function buildApp() {
   });
 
   // workoutの記録を保存するAPI
-  // app.post("/workouts", (rewq, res));
+  // {
+  //   "date": "2026-02-17",
+  //   "sets": [
+  //     { "exercise_id": 1, "weight": 100, "reps": 8 },
+  //     { "exercise_id": 1, "weight": 95, "reps": 10 }
+  //   ]
+  // }
+  app.post("/api/workouts", async (req, res) => {
+    const payload = req.body;
+    // 日付が存在していくかどうかで分けていく。
+
+    const existingWorkout = await knex("workouts")
+      .where({ date: payload.date })
+      .first();
+
+    if (existingWorkout) {
+      return res.status(409).json({
+        message: "この日付のワークアウトはすでに登録されています",
+      });
+    }
+
+    const registeredDate = await knex("workouts")
+      .insert({ date: payload.date })
+      .returning("*");
+    for (const set of payload.sets) {
+      await knex("sets").insert({
+        workout_id: registeredDate[0].id,
+        exercise_id: set.exercise_id,
+        weight: set.weight,
+        reps: set.reps,
+      });
+    }
+    res.end();
+  });
 
   return app;
 }
