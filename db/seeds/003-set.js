@@ -5,6 +5,7 @@
 exports.seed = async function (knex) {
   // Deletes ALL existing entries
   await knex("sets").del();
+  await knex.raw('TRUNCATE TABLE "sets" RESTART IDENTITY CASCADE');
   await knex("sets").insert([
     // Workout 1
     { workout_id: 1, exercise_id: 1, weight: 70.0, reps: 10 },

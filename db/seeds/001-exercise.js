@@ -7,6 +7,7 @@
 exports.seed = async function (knex) {
   // Deletes ALL existing entries
   await knex("exercises").del();
+  await knex.raw('TRUNCATE TABLE "exercises" RESTART IDENTITY CASCADE');
   await knex("exercises").insert([
     { name: "ベンチプレス", target: "胸" },
     { name: "スクワット", target: "脚" },
