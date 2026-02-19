@@ -7,7 +7,7 @@ export const InputWorkouts = (props) => {
   let navigate = useNavigate();
 
   const [sets, setSets] = useState([]);
-  const [exerciseId, setexerciseId] = useState("");
+  const [exerciseId, setExerciseId] = useState("");
   const [weight, setWeight] = useState("");
   const [reps, setReps] = useState("");
   const [lastWorkouts, setLastWorkouts] = useState([]);
@@ -44,6 +44,11 @@ export const InputWorkouts = (props) => {
       },
       body: JSON.stringify(payload),
     });
+
+    setSets([]);
+    setWeight("");
+    setReps("");
+    alert("登録完了！お疲れ様でした");
   };
 
   useEffect(() => {
@@ -55,38 +60,70 @@ export const InputWorkouts = (props) => {
     getLastWorkouts();
   }, [exerciseId]);
 
+  const onClickDelete = (index) => {
+    const newSets = [...sets];
+    newSets.splice(index, 1);
+    setSets(newSets);
+  };
+
   return (
     <div className="card">
-      <form>
-        <select size="1" onChange={(e) => setexerciseId(e.target.value)}>
-          <option value="">メニューを選択</option>
-          {exercises.map((exercise) => {
-            return (
-              <option key={exercise.id} value={exercise.id}>
-                {exercise.name}
-              </option>
-            );
-          })}
-        </select>
-        <input
-          type="number"
-          placeholder="重量"
-          onChange={(e) => {
-            setWeight(e.target.value || 0);
-          }}
-        />
-
-        <input
-          type="number"
-          placeholder="回数"
-          onChange={(e) => {
-            setReps(e.target.value);
-          }}
-        />
-      </form>
-      {lastWorkouts.length > 0 && (
+      <h2>トレーニング記録登録</h2>
+      <p>種目を選択すると、前回の記録を参照できます</p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAddSet();
+        }}
+      >
         <div>
-          <h3>これまでの記録</h3>
+          <label>
+            種目
+            <select size="1" onChange={(e) => setExerciseId(e.target.value)}>
+              <option value="">メニューを選択</option>
+              {exercises.map((exercise) => {
+                return (
+                  <option key={exercise.id} value={exercise.id}>
+                    {exercise.name}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
+        </div>
+
+        <div>
+          <label>
+            重量 (kg)
+            <input
+              type="number"
+              placeholder="重量"
+              onChange={(e) => {
+                setWeight(e.target.value || 0);
+              }}
+            />
+          </label>
+        </div>
+
+        <div>
+          <label>
+            回数
+            <input
+              type="number"
+              placeholder="回数"
+              onChange={(e) => {
+                setReps(e.target.value);
+              }}
+            />
+          </label>
+        </div>
+      </form>
+      <button onClick={handleAddSet}>セット登録</button>
+      <button onClick={() => navigate("/")}>Homeに戻る</button>
+
+      {lastWorkouts.length > 0 && (
+        <div className="card">
+          <h3>前回までの記録</h3>
           <ul>
             {lastWorkouts.map((lastWorkout, index) => (
               <li key={index}>
@@ -98,16 +135,13 @@ export const InputWorkouts = (props) => {
         </div>
       )}
 
-      <button onClick={handleAddSet}>セット登録</button>
-      <button onClick={() => navigate("/")}>Homeに戻る</button>
-
       <br></br>
 
       {sets.length === 0 ? (
         <div></div>
       ) : (
-        <>
-          <h3>登録予定セット</h3>
+        <div className="card">
+          <h3>今日のトレーニング内容</h3>
           <ul>
             {sets.map((set, index) => {
               const exercise = exercises.find(
@@ -117,6 +151,7 @@ export const InputWorkouts = (props) => {
               return (
                 <li key={index}>
                   {exercise?.name} / {set.weight}kg / {set.reps}回
+                  <button onClick={() => onClickDelete(index)}>削除🗑</button>
                 </li>
               );
             })}
@@ -130,7 +165,7 @@ export const InputWorkouts = (props) => {
           >
             今日の記録を登録
           </button>
-        </>
+        </div>
       )}
     </div>
   );

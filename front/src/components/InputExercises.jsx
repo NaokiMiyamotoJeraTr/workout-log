@@ -37,7 +37,7 @@ export const InputExercises = () => {
   };
 
   return (
-    <>
+    <div className="card">
       <h2>新しい種目登録</h2>
       <form>
         <input
@@ -59,6 +59,6 @@ export const InputExercises = () => {
       </form>
       <button onClick={handleSubmit}>追加</button>
       <button onClick={() => navigate("/")}>Homeに戻る</button>
-    </>
+    </div>
   );
 };
