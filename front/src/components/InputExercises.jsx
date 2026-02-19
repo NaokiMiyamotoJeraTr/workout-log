@@ -24,7 +24,9 @@ export const InputExercises = (props) => {
         body: JSON.stringify(payload),
       });
       if (!response.ok) {
-        throw new Error("登録失敗");
+        const errorData = await response.json();
+        alert(errorData.message);
+        return;
       }
       setExercise("");
       setTarget("");
