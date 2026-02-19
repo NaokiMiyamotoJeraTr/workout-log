@@ -4,6 +4,7 @@ require("dotenv").config();
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
+console.log("読み込み完了");
 module.exports = {
   development: {
     client: "pg",

@@ -1,6 +1,6 @@
 const path = require("path");
 const express = require("express");
-const knex = require("./knex"); //knexのデータベースをゲット
+const knex = require("./src/knex"); //knexのデータベースをゲット
 
 function buildApp() {
   const app = express();
