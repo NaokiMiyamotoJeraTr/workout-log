@@ -50,10 +50,13 @@ function buildApp() {
       });
     }
 
-    console.log("送られてきた内容2", payload);
     await knex("exercises").insert({
       name: payload.exercise,
       target: payload.target,
+    });
+
+    return res.status(201).json({
+      message: "種目登録完了",
     });
   });
 
@@ -103,6 +106,85 @@ function buildApp() {
       });
     }
     res.end();
+  });
+
+  // user登録をするAPI
+  app.post("/api/register", async (req, res) => {
+    const payload = req.body;
+
+    const crypto = require("crypto");
+    const salt = crypto.randomBytes(6).toString("hex");
+    const saltAndPassword = `${salt}${payload.password}`;
+    const hash = crypto.createHash("sha256");
+    const hashedPassword = hash.update(saltAndPassword).digest("hex");
+
+    if (!payload.name || !payload.password) {
+      return res.status(400).json({
+        message: "name と password は必須です",
+      });
+    }
+
+    const existingUser = await knex("users")
+      .where({ name: payload.name })
+      .first();
+
+    if (existingUser) {
+      return res.status(409).json({
+        message: "そのユーザーはすでに登録されています",
+      });
+    }
+
+    await knex("users").insert({
+      name: payload.name,
+      password: hashedPassword, //hash化
+      salt: salt,
+    });
+
+    return res.status(200).json({
+      message: "ユーザー登録完了",
+    });
+  });
+
+  // ログインするAPI
+  app.post("/api/login", async (req, res) => {
+    const payload = req.body;
+
+    if (!payload.name || !payload.password) {
+      return res.status(400).json({
+        message: "name と password は必須です",
+      });
+    }
+
+    const existingUser = await knex("users")
+      .where({ name: payload.name })
+      .first();
+
+    if (!existingUser) {
+      return res.status(400).json({
+        message: "そのユーザーは登録していません",
+      });
+    }
+
+    const crypto = require("crypto");
+
+    const hashedInputPassword = crypto
+      .createHash("sha256")
+      .update(`${existingUser.salt}${payload.password}`)
+      .digest("hex");
+
+    if (existingUser.password !== hashedInputPassword) {
+      return res.status(401).json({
+        message: "パスワードが間違っています",
+      });
+    } else {
+      return res.status(200).json({
+        message: "ログイン成功",
+        user: {
+          id: existingUser.id,
+          name: existingUser.name,
+        },
+      });
+    }
   });
 
   return app;

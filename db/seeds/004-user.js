@@ -4,17 +4,27 @@
  */
 exports.seed = async function (knex) {
   // Deletes ALL existing entries
-  await knex("users").del();
+  // await knex("users").del();
+  await knex.raw('TRUNCATE TABLE "users" RESTART IDENTITY CASCADE');
+
+  const crypto = require("crypto");
+  const createUser = (name, plainPassword) => {
+    const salt = crypto.randomBytes(6).toString("hex");
+    const hashedPassword = crypto
+      .createHash("sha256")
+      .update(`${salt}${plainPassword}`)
+      .digest("hex");
+
+    return {
+      name,
+      password: hashedPassword,
+      salt,
+      created_at: knex.fn.now(),
+    };
+  };
+
   await knex("users").insert([
-    {
-      name: "testuser",
-      password: "password123",
-      created_at: knex.fn.now(),
-    },
-    {
-      name: "admin",
-      password: "admin123",
-      created_at: knex.fn.now(),
-    },
+    createUser("testuser", "password123"),
+    createUser("admin", "admin123"),
   ]);
 };
