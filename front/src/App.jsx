@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-// import "./App.css";
+import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
+import "./App.css";
 import { ShowExercises } from "./components/ShowExercises";
 import { InputExercises } from "./components/InputExercises";
 import { ShowWorkouts } from "./components/ShowWorkouts";
+import { InputWorkouts } from "./components/InputWorkouts";
+import { Home } from "./components/home";
 
 function App() {
   const [exercises, setExercises] = useState([]); //exercisesのデータ一覧が入るstate。
@@ -32,15 +35,19 @@ function App() {
 
   return (
     <>
-      <div className="workout_log">
-        <h1 className="title">Welcome to the Workout Log Apps!</h1>
-        <p className="read-the-docs">頑張って運動していきましょう！</p>
-        <h2>筋トレメニュー一覧</h2>
-        <ShowExercises exercises={exercises} />
-        <InputExercises />
-        <h2>筋トレ記録</h2>
-        <ShowWorkouts workouts={workouts} />
-      </div>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={<Home exercises={exercises} workouts={workouts} />}
+          />
+          <Route path="/add-exercise" element={<InputExercises />} />
+          <Route
+            path="/add-workout"
+            element={<InputWorkouts exercises={exercises} />}
+          />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
