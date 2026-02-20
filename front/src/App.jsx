@@ -49,7 +49,17 @@ function App() {
               />
             }
           />
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/register"
+            element={
+              <Register
+                user={user}
+                password={password}
+                setUser={setUser}
+                setPassword={setPassword}
+              />
+            }
+          />
           <Route
             path="/home"
             element={
@@ -58,11 +68,19 @@ function App() {
           />
           <Route
             path="/add-exercise"
-            element={<InputExercises userID={userID} />}
+            element={
+              <InputExercises userID={userID} getExercises={getExercises} />
+            }
           />
           <Route
             path="/add-workout"
-            element={<InputWorkouts exercises={exercises} userID={userID} />}
+            element={
+              <InputWorkouts
+                exercises={exercises}
+                userID={userID}
+                getWorkouts={getWorkouts}
+              />
+            }
           />
         </Routes>
       </BrowserRouter>

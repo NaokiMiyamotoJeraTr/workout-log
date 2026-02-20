@@ -11,17 +11,22 @@ function buildApp() {
   app.use(express.json());
 
   //exercises種目一覧の取得
-  app.get("/api/exercises", async (req, res) => {
-    const exercises = await knex("exercises").select("*");
+  app.get("/api/:userId/exercises", async (req, res) => {
+    const userId = Number(req.params.userId);
+    const exercises = await knex("exercises")
+      .where({ user_id: userId })
+      .select("*");
     res.status(200).json({ exercises: exercises });
   });
 
   //指定された種目の前回のメニューを取得するAPI
-  app.get("/api/exercises/:id/", async (req, res) => {
+  app.get("/api/:userId/exercises/:id/", async (req, res) => {
+    const userId = Number(req.params.userId);
     const id = Number(req.params.id);
     const lastWorkout = await knex("sets")
       .join("workouts", "sets.workout_id", "workouts.id")
       .where("sets.exercise_id", id)
+      .andWhere("workouts.user_id", userId)
       .orderBy("workouts.date", "desc")
       .select("sets.weight", "sets.reps", "workouts.date");
 
@@ -38,10 +43,11 @@ function buildApp() {
   });
 
   // exercise種目登録のAPI
-  app.post("/api/exercises", async (req, res) => {
+  app.post("/api/:userId/exercises", async (req, res) => {
+    const userId = Number(req.params.userId);
     const payload = req.body;
     const existingExercise = await knex("exercises")
-      .where({ name: payload.exercise })
+      .where({ user_id: userId, name: payload.exercise })
       .first();
 
     if (existingExercise) {
@@ -51,6 +57,7 @@ function buildApp() {
     }
 
     await knex("exercises").insert({
+      user_id: userId,
       name: payload.exercise,
       target: payload.target,
     });
@@ -61,8 +68,10 @@ function buildApp() {
   });
 
   // worukoutの記録を表示するAPI
-  app.get("/api/workouts", async (req, res) => {
+  app.get("/api/:userId/workouts", async (req, res) => {
+    const userId = Number(req.params.userId);
     const data = await knex("workouts")
+      .where({ "workouts.user_id": userId })
       .join("sets", "workouts.id", "sets.workout_id")
       .join("exercises", "sets.exercise_id", "exercises.id")
       .select(
@@ -91,11 +100,12 @@ function buildApp() {
   //     { "exercise_id": 1, "weight": 95, "reps": 10 }
   //   ]
   // }
-  app.post("/api/workouts", async (req, res) => {
+  app.post("/api/:userId/workouts", async (req, res) => {
+    const userId = Number(req.params.userId);
     const payload = req.body;
 
     const registeredDate = await knex("workouts")
-      .insert({ date: payload.date })
+      .insert({ user_id: userId, date: payload.date })
       .returning("*");
     for (const set of payload.sets) {
       await knex("sets").insert({

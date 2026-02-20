@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const InputWorkouts = (props) => {
-  const { exercises, userID } = props;
+  const { exercises, userID, getWorkouts } = props;
   let navigate = useNavigate();
 
   const [sets, setSets] = useState([]);
@@ -37,7 +37,7 @@ export const InputWorkouts = (props) => {
       sets: sets,
     };
 
-    await fetch(`/api/${userID}/workouts`, {
+    const response = await fetch(`/api/${userID}/workouts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,9 +45,18 @@ export const InputWorkouts = (props) => {
       body: JSON.stringify(payload),
     });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert(errorData.message);
+      return;
+    }
+
     setSets([]);
     setWeight("");
     setReps("");
+
+    await getWorkouts(); //最新取得
+    navigate("/home");
     alert("登録完了！お疲れ様でした");
   };
 

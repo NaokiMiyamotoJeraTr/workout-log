@@ -1,5 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 export const Register = (props) => {
   const { user, setUser, password, setPassword } = props;
+  let navigate = useNavigate();
 
   const handleRegister = async () => {
     const payload = {
@@ -14,15 +17,16 @@ export const Register = (props) => {
         },
         body: JSON.stringify(payload),
       });
-      const data = res.json();
+      const data = await res.json();
       if (!res.ok) {
-        alert(data.message || "ログイン失敗");
+        alert(data.message || "登録失敗");
         return;
       }
-      alert(data.message || "ログイン成功");
+      alert(data.message || "登録成功");
 
       setPassword("");
       setUser("");
+      navigate("/");
     } catch {
       alert("通信エラー");
     }

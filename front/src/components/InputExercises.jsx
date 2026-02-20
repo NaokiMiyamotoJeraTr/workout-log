@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const InputExercises = (props) => {
-  const { userID } = props;
+  const { userID, getExercises } = props;
   const [exercise, setExercise] = useState("");
   const [target, setTarget] = useState("");
   let navigate = useNavigate();
@@ -38,6 +38,9 @@ export const InputExercises = (props) => {
       }
       setExercise("");
       setTarget("");
+
+      await getExercises(); //最新取得
+      navigate("/home");
     } catch (error) {
       console.error("エラー内容です", error);
     }
