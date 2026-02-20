@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export const Login = (props) => {
   let navigate = useNavigate();
-  const { user, setUser, password, setPassword } = props;
+  const { user, setUser, password, setPassword, setUserID } = props;
 
   const handleLogin = async () => {
     if (!user || !password) {
@@ -33,6 +33,7 @@ export const Login = (props) => {
         setPassword("");
         alert(data.message || "ログイン成功");
         // TOPページへ飛ばす機能を追加（navigate使用）
+        setUserID(data.user.id);
         navigate("/home");
       }
     } catch {

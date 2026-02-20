@@ -12,23 +12,26 @@ function App() {
   const [workouts, setWorkouts] = useState([]); //筋トレ記録のデータ一覧が入るstate。
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
+  const [userID, setUserID] = useState("");
 
   const getExercises = async () => {
-    const res = await fetch("/api/exercises");
+    const res = await fetch(`/api/${userID}/exercises`);
     const data = await res.json();
     setExercises(data.exercises);
   };
 
   const getWorkouts = async () => {
-    const res = await fetch("/api/workouts");
+    const res = await fetch(`/api/${userID}/workouts`);
     const data = await res.json();
     setWorkouts(data.workouts);
   };
 
   useEffect(() => {
+    if (!userID) return;
+
     getExercises();
     getWorkouts();
-  }, []);
+  }, [userID]);
 
   return (
     <>
@@ -42,18 +45,24 @@ function App() {
                 password={password}
                 setUser={setUser}
                 setPassword={setPassword}
+                setUserID={setUserID}
               />
             }
           />
           <Route path="/register" element={<Register />} />
           <Route
             path="/home"
-            element={<Home exercises={exercises} workouts={workouts} />}
+            element={
+              <Home exercises={exercises} workouts={workouts} userID={userID} />
+            }
           />
-          <Route path="/add-exercise" element={<InputExercises />} />
+          <Route
+            path="/add-exercise"
+            element={<InputExercises userID={userID} />}
+          />
           <Route
             path="/add-workout"
-            element={<InputWorkouts exercises={exercises} />}
+            element={<InputWorkouts exercises={exercises} userID={userID} />}
           />
         </Routes>
       </BrowserRouter>

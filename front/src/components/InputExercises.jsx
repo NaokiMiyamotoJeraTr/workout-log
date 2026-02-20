@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const InputExercises = () => {
+export const InputExercises = (props) => {
+  const { userID } = props;
   const [exercise, setExercise] = useState("");
   const [target, setTarget] = useState("");
   let navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userID) {
+      navigate("/");
+    }
+  }, [navigate, userID]);
 
   const handleSubmit = async () => {
     if (!exercise) {
@@ -17,7 +24,7 @@ export const InputExercises = () => {
     };
 
     try {
-      const response = await fetch("/api/exercises", {
+      const response = await fetch(`/api/${userID}/exercises`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +65,7 @@ export const InputExercises = () => {
         />
       </form>
       <button onClick={handleSubmit}>追加</button>
-      <button onClick={() => navigate("/")}>Homeに戻る</button>
+      <button onClick={() => navigate("/home")}>Homeに戻る</button>
     </div>
   );
 };

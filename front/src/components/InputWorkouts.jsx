@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const InputWorkouts = (props) => {
-  const { exercises } = props;
+  const { exercises, userID } = props;
   let navigate = useNavigate();
 
   const [sets, setSets] = useState([]);
@@ -37,7 +37,7 @@ export const InputWorkouts = (props) => {
       sets: sets,
     };
 
-    await fetch("/api/workouts", {
+    await fetch(`/api/${userID}/workouts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -53,12 +53,18 @@ export const InputWorkouts = (props) => {
 
   useEffect(() => {
     const getLastWorkouts = async () => {
-      const res = await fetch(`/api/exercises/${exerciseId}`);
+      const res = await fetch(`/api/${userID}/exercises/${exerciseId}`);
       const lastWorkoutsData = await res.json();
       setLastWorkouts(lastWorkoutsData);
     };
     getLastWorkouts();
-  }, [exerciseId]);
+  }, [exerciseId, userID]);
+
+  useEffect(() => {
+    if (!userID) {
+      navigate("/");
+    }
+  }, [navigate, userID]);
 
   const onClickDelete = (index) => {
     const newSets = [...sets];
@@ -119,7 +125,7 @@ export const InputWorkouts = (props) => {
         </div>
       </form>
       <button onClick={handleAddSet}>セット登録</button>
-      <button onClick={() => navigate("/")}>Homeに戻る</button>
+      <button onClick={() => navigate("/home")}>Homeに戻る</button>
 
       {lastWorkouts.length > 0 && (
         <div className="card">

@@ -1,10 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { ShowExercises } from "./ShowExercises";
 import { ShowWorkouts } from "./ShowWorkouts";
+import { useEffect } from "react";
 
 export const Home = (props) => {
-  const { exercises, workouts } = props;
+  const { exercises, workouts, userID } = props;
   let navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userID) {
+      navigate("/");
+    }
+  }, [navigate, userID]);
+
   return (
     <div className="workout_log">
       <h1 className="title">Welcome to the Workout Log Apps!</h1>
