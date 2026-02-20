@@ -4,7 +4,7 @@
  */
 exports.seed = async function (knex) {
   // Deletes ALL existing entries
-  // await knex("users").del();
+  await knex("users").del();
   await knex.raw('TRUNCATE TABLE "users" RESTART IDENTITY CASCADE');
 
   const crypto = require("crypto");
