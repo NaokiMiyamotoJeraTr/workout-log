@@ -5,7 +5,7 @@ import { InputExercises } from "./components/InputExercises";
 import { InputWorkouts } from "./components/InputWorkouts";
 import { Home } from "./components/home";
 import { Login } from "./components/Login";
-import { Register } from "./components/register";
+import { Register } from "./components/Register";
 
 function App() {
   const [exercises, setExercises] = useState([]); //exercisesのデータ一覧が入るstate。
