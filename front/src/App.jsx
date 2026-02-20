@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import "./App.css";
-import { ShowExercises } from "./components/ShowExercises";
 import { InputExercises } from "./components/InputExercises";
-import { ShowWorkouts } from "./components/ShowWorkouts";
 import { InputWorkouts } from "./components/InputWorkouts";
 import { Home } from "./components/home";
+import { Login } from "./components/Login";
+import { Register } from "./components/register";
 
 function App() {
   const [exercises, setExercises] = useState([]); //exercisesのデータ一覧が入るstate。
   const [workouts, setWorkouts] = useState([]); //筋トレ記録のデータ一覧が入るstate。
+  const [user, setUser] = useState("");
+  const [password, setPassword] = useState("");
 
   const getExercises = async () => {
     const res = await fetch("/api/exercises");
@@ -28,17 +30,24 @@ function App() {
     getWorkouts();
   }, []);
 
-  // 筋トレメニュー一が追加された時も筋トレメニュー一覧を取得するように調整
-  // useEffect(() => {
-  //   getExercises();
-  // }, [exercises]);
-
   return (
     <>
       <BrowserRouter>
         <Routes>
           <Route
             path="/"
+            element={
+              <Login
+                user={user}
+                password={password}
+                setUser={setUser}
+                setPassword={setPassword}
+              />
+            }
+          />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/home"
             element={<Home exercises={exercises} workouts={workouts} />}
           />
           <Route path="/add-exercise" element={<InputExercises />} />
