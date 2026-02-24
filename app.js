@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const knex = require("./src/knex"); //knexのデータベースをゲット
+const session = require("express-session");
 
 function buildApp() {
   const app = express();
@@ -9,6 +10,19 @@ function buildApp() {
   app.use(express.static(path.join(__dirname, "/public")));
 
   app.use(express.json());
+
+  //セッションの設定
+  app.use(
+    session({
+      secret: "my-secret-key",
+      resave: false,
+      saveUninitialized: true,
+      cookie: {
+        secure: false,
+        httpOnly: false,
+      },
+    }),
+  );
 
   //exercises種目一覧の取得
   app.get("/api/:userId/exercises", async (req, res) => {
@@ -187,6 +201,10 @@ function buildApp() {
         message: "パスワードが間違っています",
       });
     } else {
+      req.session.user = {
+        id: existingUser.id,
+        name: existingUser.name,
+      };
       return res.status(200).json({
         message: "ログイン成功",
         user: {
@@ -199,5 +217,12 @@ function buildApp() {
 
   return app;
 }
+
+//ログアウトAPI
+app.post("/api/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.status(200).json({ message: "ログアウトしました" });
+  });
+});
 
 module.exports = { buildApp };
