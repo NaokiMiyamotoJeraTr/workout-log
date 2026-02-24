@@ -215,14 +215,14 @@ function buildApp() {
     }
   });
 
+  //ログアウトAPI
+  app.post("/api/logout", (req, res) => {
+    req.session.destroy(() => {
+      res.status(200).json({ message: "ログアウトしました" });
+    });
+  });
+
   return app;
 }
-
-//ログアウトAPI
-app.post("/api/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.status(200).json({ message: "ログアウトしました" });
-  });
-});
 
 module.exports = { buildApp };
