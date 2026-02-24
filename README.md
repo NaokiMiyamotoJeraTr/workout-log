@@ -32,6 +32,10 @@
 ![React Router Badge](https://img.shields.io/badge/React%20Router-CA4245?logo=reactrouter&logoColor=fff&style=flat)
 ![Vite Badge](https://img.shields.io/badge/Vite-9135FF?logo=vite&logoColor=fff&style=flat)
 
+### Deploy
+
+![Render Badge](https://img.shields.io/badge/Render-000?logo=render&logoColor=fff&style=flat)
+
 ---
 
 ## ３．🚀 セットアップ(開発環境)
